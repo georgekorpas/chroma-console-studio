@@ -35,7 +35,7 @@ export async function run({connect,disconnect,midi}) {
   await test('Requested copy is removed and module hints are brighter with a subtle glow',()=>{
     assert(!document.body.textContent.includes('Shape your signal.'),'Subtitle remains');
     const style=getComputedStyle($('.module-hint'));
-    assert(style.color==='rgb(198, 205, 212)','Hint colour is incorrect');
+    assert(style.color==='rgb(220, 226, 232)','Hint colour is incorrect');
     assert(style.textShadow!=='none','Hint glow is missing');
   });
   disconnect();
