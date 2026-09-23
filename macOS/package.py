@@ -55,6 +55,9 @@ names = ['VERSION','.gitignore','README.md','INSTALL.txt','CHANGELOG.md',
          'Stop Chroma Editor.command','macOS/build.py','macOS/test.py',
          'macOS/package.py','macOS/README.md','tests/index.html',
          'tests/tests.mjs','tests/live-ui.mjs']
+names += ['docs/screenshots/'+name for name in
+          ['README.md','sound.jpg','output.jpg','presets.jpg',
+           'performance.jpg','midi-activity.jpg']]
 for folder in ['macOS/Sources','macOS/Tests','macOS/Resources']:
     names += [str(path.relative_to(ROOT)) for path in (ROOT/folder).rglob('*.swift')]
 if (ROOT/'LICENSE').exists(): names.append('LICENSE')
