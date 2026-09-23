@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-beta.2
+
+- Removed the "Independent Mac app" label from the app sidebar.
+
 ## 1.0.0-beta.1
 
 Initial community beta for Apple Silicon Macs.

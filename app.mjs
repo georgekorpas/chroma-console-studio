@@ -322,7 +322,7 @@ async function importDesktopLibrary(){
 if(desktop){
   document.body.classList.add('desktop');
   if(!SIMULATOR)$('.hero-note').textContent='NATIVE MIDI';
-  $('.independent').textContent='Independent Mac app';
+  $('.independent').remove();
   $('#guide .help-grid article:first-child li:nth-child(2)').textContent='The app detects your pedal automatically. Select Refresh MIDI if it is not listed.';
   $('#guide .help-grid article:nth-child(3) p:last-child').textContent='Presets are stored in this app’s library on your Mac. Export a copy to keep a backup.';
   $('.library>small').textContent='Presets are saved in the app. Export to keep a backup.';
