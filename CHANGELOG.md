@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0-beta.3
+
+- Enlarged effect descriptions to 14 px at every window size, with brighter text and more spacing.
+- Added a screenshot walkthrough of the Sound, Presets, Performance and MIDI activity pages to the README.
+
 ## 1.0.0-beta.2
 
 - Removed the "Independent Mac app" label from the app sidebar.
