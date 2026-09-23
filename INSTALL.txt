@@ -1,0 +1,41 @@
+CHROMA CONSOLE STUDIO — INSTALLATION
+
+Apple Silicon Macs (M1 or later), macOS 13 or later.
+Initial public beta. Not supported on Intel Macs.
+
+1. Drag Chroma Console.app onto the Applications folder in this disk image.
+2. Eject the disk image.
+3. Open Chroma Console from Applications.
+4. Power your pedal normally, connect its USB data cable and match its MIDI channel.
+
+FIRST LAUNCH
+
+This community build is ad-hoc signed, not signed with an Apple Developer ID
+and not notarized by Apple. macOS may block its first launch.
+
+If you trust the release you downloaded, try opening the installed app first.
+Then open System Settings > Privacy & Security and choose Open Anyway if that
+option is offered for Chroma Console. Confirm the app-specific Open prompt.
+Managed Macs may prevent this. No system security settings are changed by
+this disk image or by the app.
+
+Apple's guidance: https://support.apple.com/en-us/102445
+
+UPDATES AND DATA
+
+Quit the existing app before replacing it with a newer release.
+Presets live separately in:
+~/Library/Application Support/Chroma Console Studio/
+Export your library from the File menu to keep a backup.
+
+PEDAL LIMITATIONS
+
+USB carries MIDI control, not audio. Physical knob changes were not reported
+by the pedal during testing, so full two-way synchronization is unavailable.
+Local presets are parameter overlays, not full pedal backups. Remote pedal
+preset saving and preset readback are not supported by its published MIDI API.
+
+Only documented MIDI control and preset-recall commands are sent. The app has
+no firmware updater, bootloader operation, reset or SysEx output.
+
+Independent software. Not affiliated with or endorsed by Hologram Electronics.

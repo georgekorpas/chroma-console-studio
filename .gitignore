@@ -1,0 +1,22 @@
+# Local build and release artifacts
+macOS/.build/
+macOS/dist/
+dist/
+*.dmg
+*.app/
+*.zip
+
+# Local state and editor files
+.DS_Store
+__pycache__/
+*.pyc
+.server.log
+.server.pid
+.env
+.env.*
+*.p12
+*.p8
+*.mobileprovision
+library.json
+library.previous.json
+session.json
