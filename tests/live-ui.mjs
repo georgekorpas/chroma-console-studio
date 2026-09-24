@@ -19,6 +19,17 @@ export async function run({connect,disconnect,midi}) {
     assert(sent.filter(bytes=>bytes[1]===68).at(-1)?.[2]===58,'Final Time value was lost');
   });
   observer.disconnect();
+  await test('Four banks keep all 80 program numbers across five colour groups',async()=>{
+    const names=['Red','Yellow','Green','Blue','Purple'];
+    for(let bank=0;bank<4;bank++){
+      const before=sent.length;document.querySelectorAll('#banks button')[bank].click();
+      assert(sent.length===before,'Browsing a bank sent MIDI');
+      const groups=[...document.querySelectorAll('.slot-group')],buttons=[...document.querySelectorAll('#slots button')];
+      assert(groups.length===5&&buttons.length===20,'Bank must show five groups of four');
+      groups.forEach((row,i)=>assert(row.querySelector('.slot-group-label').textContent===names[i]&&row.querySelectorAll('button').length===4,'LED group mismatch'));
+      buttons[19].click();await wait(30);assert(sent.at(-1).join(',')===`192,${bank*20+19}`,'Slot sent the wrong program');
+    }
+  });
   await test('Offline edits reveal Apply; reconnect sends nothing; Apply completes quietly',async()=>{
     disconnect();input(64,73);assert(!apply.hidden&&apply.disabled,'Offline edit was not offered');
     const before=$('#send-count').textContent;await connect();assert($('#send-count').textContent===before,'Reconnect sent values');
