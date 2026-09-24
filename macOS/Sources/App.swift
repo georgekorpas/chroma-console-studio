@@ -30,6 +30,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
     private var store: PresetStore!
     private let midi = MIDIService()
     private var simulation = Bundle.main.object(forInfoDictionaryKey:"ChromaStartInSimulator") as? Bool ?? false
+    private let releaseVersion = Bundle.main.object(forInfoDictionaryKey: "ChromaReleaseVersion") as? String ?? "Unknown"
+    private let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
     private var ready = false
     private var terminationApproved = false
     private var diagnostics: NSWindow?
@@ -50,7 +52,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
         web.navigationDelegate = self; web.uiDelegate = self
         web.underPageBackgroundColor = NSColor(srgbRed: 0.067, green: 0.075, blue: 0.082, alpha: 1)
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1660, height: 1000), styleMask: [.titled,.closable,.miniaturizable,.resizable], backing: .buffered, defer: false)
-        window.title = "Chroma Console"; window.subtitle = "Studio"
+        window.title = "Chroma Console"; window.subtitle = "Studio · v\(releaseVersion)"
         window.contentView = web; window.delegate = self
         window.minSize = NSSize(width: 900, height: 620)
         window.appearance = NSAppearance(named: .darkAqua)
@@ -64,7 +66,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
     }
     private func loadEditor() {
         ready = false
-        window.subtitle = simulation ? "Simulator · no hardware" : "Studio"
+        window.subtitle = (simulation ? "Simulator · no hardware" : "Studio") + " · v\(releaseVersion)"
         web.load(URLRequest(url: URL(string: "chroma://app/index.html" + (simulation ? "?demo=1" : "") + "#editor")!))
     }
     private func emit(_ kind: String, _ payload: [String: Any]) {
@@ -80,7 +82,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
         do {
             switch op {
             case "init":
-                replyHandler(["library": simulation ? NSNull() : (try store.read("library") as Any? ?? NSNull()), "session": simulation ? NSNull() : (try store.read("session") as Any? ?? NSNull()), "simulation":simulation], nil)
+                replyHandler(["version":releaseVersion, "buildNumber":buildNumber, "library": simulation ? NSNull() : (try store.read("library") as Any? ?? NSNull()), "session": simulation ? NSNull() : (try store.read("session") as Any? ?? NSNull()), "simulation":simulation], nil)
             case "ready": ready = true; replyHandler(true,nil)
             case "ports":
                 guard !simulation else { throw ChromaError.message("Simulator cannot access MIDI hardware.") }
@@ -156,7 +158,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
         NSApplication.shared.windowsMenu = windows; NSApplication.shared.mainMenu = main
     }
     @objc private func about() {
-        NSApplication.shared.orderFrontStandardAboutPanel(options:[.applicationName:"Chroma Console",.applicationVersion:(Bundle.main.object(forInfoDictionaryKey:"ChromaReleaseVersion") as? String ?? "1.0"),.version:"1",.credits:NSAttributedString(string:"Independent MIDI editor for Hologram Electronics Chroma Console.\nDocumented controls only. No firmware or bootloader access.")])
+        NSApplication.shared.orderFrontStandardAboutPanel(options:[.applicationName:"Chroma Console",.applicationVersion:releaseVersion,.version:buildNumber,.credits:NSAttributedString(string:"Independent MIDI editor for Hologram Electronics Chroma Console.\nDocumented controls only. No firmware or bootloader access.")])
     }
     @objc private func navigate(_ sender:NSMenuItem) { emit("menu",["action":"page","page":["editor","presets","performance","activity","guide"][sender.tag]]) }
     @objc private func command(_ sender:NSMenuItem) { emit("menu",["action":[1:"save",2:"import",3:"export",4:"connect",5:"disconnect"][sender.tag]!]) }
