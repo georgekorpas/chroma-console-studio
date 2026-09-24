@@ -22,6 +22,8 @@ app = ROOT/'macOS/dist/Chroma Console.app'
 info = plistlib.loads((app/'Contents/Info.plist').read_bytes())
 if info.get('ChromaStartInSimulator') or info.get('ChromaReleaseVersion') != version:
     raise SystemExit('Build the normal app for the current VERSION before packaging.')
+if info.get('CFBundleVersion') != (ROOT/'BUILD_NUMBER').read_text().strip():
+    raise SystemExit('Build number mismatch. Rebuild before packaging.')
 subprocess.run(['lipo',str(app/'Contents/MacOS/ChromaConsole'),'-verify_arch','arm64'], check=True)
 output = ROOT/'dist'
 output.mkdir(exist_ok=True)
@@ -49,7 +51,7 @@ with tempfile.TemporaryDirectory(prefix='chroma-package-') as temporary:
 
 # Explicit source allowlist prevents presets, backups, credentials and build
 # output from slipping into the public archive, even if the folder grows later.
-names = ['VERSION','.gitignore','README.md','INSTALL.txt','CHANGELOG.md',
+names = ['VERSION','BUILD_NUMBER','.gitignore','README.md','INSTALL.txt','CHANGELOG.md',
          'RELEASING.md','index.html','style.css','app.mjs','desktop.mjs',
          'protocol.mjs','server.py','Open Chroma Editor.command',
          'Stop Chroma Editor.command','macOS/build.py','macOS/test.py',
@@ -57,7 +59,7 @@ names = ['VERSION','.gitignore','README.md','INSTALL.txt','CHANGELOG.md',
          'tests/tests.mjs','tests/live-ui.mjs']
 names += ['docs/screenshots/'+name for name in
           ['README.md','sound.jpg','output.jpg','presets.jpg',
-           'performance.jpg','midi-activity.jpg']]
+           'performance.jpg','midi-activity.jpg','preset-saving.jpg']]
 for folder in ['macOS/Sources','macOS/Tests','macOS/Resources']:
     names += [str(path.relative_to(ROOT)) for path in (ROOT/folder).rglob('*.swift')]
 if (ROOT/'LICENSE').exists(): names.append('LICENSE')
