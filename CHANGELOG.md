@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0-beta.5 · build 5
+
+- Display the full version in the native window title and app header.
+- Keep About, build metadata, source version and release filenames consistent.
+- Include the clearer preset bank layout and step-by-step saving guide from the previous local build.
+
+## 1.0.0-beta.4
+
+- Clearer separation between saving editor settings on the Mac, applying a sound, and saving it into pedal memory.
+- Numbered physical-pedal saving instructions, destination checks, completion lights and cancellation steps.
+- Show all 80 slots as four module banks, each with five labelled colour groups of four slots.
+- Explain the 500-preset library limit and dependencies on existing pedal slots.
+
 ## 1.0.0-beta.3
 
 - Enlarged effect descriptions to 14 px at every window size, with brighter text and more spacing.

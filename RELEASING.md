@@ -19,3 +19,7 @@ Keep a backup of presets when replacing the installed app. The public source ZIP
 The local code-signature and disk-image integrity checks do not imply approval by Apple or an accepted Gatekeeper assessment. No security setting changes or quarantine-removal scripts are included.
 
 GitHub instructions: [Managing releases](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
+
+## Version consistency
+
+`VERSION` holds the full release version (including beta suffix), and `BUILD_NUMBER` is an increasing integer for macOS. Update both before distributing a new build. The native title, header and About panel read the bundled metadata generated from these files. Keep the README version, changelog, GitHub tag (`v` + `VERSION`) and release asset names aligned. Packaging rejects mismatched release or build metadata.

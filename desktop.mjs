@@ -50,7 +50,7 @@ async function createDesktop(){
     if(kind==='menu')window.dispatchEvent(new CustomEvent('chroma-menu',{detail:payload}));
   });
   return {
-    initialError,session:initial.session,
+    initialError,session:initial.session,version:initial.version,buildNumber:initial.buildNumber,
     storage:{
       getItem:key=>values.get(key)??null,
       async setItem(key,text){

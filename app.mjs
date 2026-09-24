@@ -218,10 +218,24 @@ function renderValues(){
 }
 function resetDraft(base=null){pendingControls.clear();pendingBase=false;loadedPreset=false;draft={name:'',notes:'',baseProgram:base,values:{}};$('#preset-name').value='';$('#preset-notes').value='';liveEdits.clear();renderValues();}
 function selectBank(value){bank=value;renderBanks();persistSession();}
+// Each bank has five LED colours, each with four cursor positions (manual pp. 31, 49).
+const slotGroups=[['Red','#ff8977'],['Yellow','#f4ce69'],['Green','#8bd88b'],['Blue','#6dd8ea'],['Purple','#c39aed']];
 function renderBanks(){
-  $('#banks').replaceChildren();'ABCD'.split('').forEach((letter,i)=>{const button=document.createElement('button');button.textContent=`BANK ${letter}`;button.classList.toggle('selected',i===bank);button.setAttribute('aria-pressed',i===bank);button.onclick=()=>selectBank(i);$('#banks').append(button);});
-  $('#slots').replaceChildren();for(let i=0;i<20;i++){const n=bank*20+i,b=document.createElement('button');b.textContent=programLabel(n);b.setAttribute('aria-label',`Recall pedal preset ${programLabel(n)}`);b.dataset.live='';b.classList.toggle('selected',recalled===n);b.onclick=guarded(()=>recall(n));$('#slots').append(b);}
-  $('#selected-slot').textContent=recalled===null?'No slot recalled':`Selected slot · ${programLabel(recalled)}`;updateConnection();
+  $('#banks').replaceChildren();'ABCD'.split('').forEach((letter,i)=>{
+    const button=document.createElement('button'),name=document.createElement('small');
+    button.textContent=`BANK ${letter}`;name.textContent=MODULES[i].name;button.append(name);
+    button.classList.toggle('selected',i===bank);button.setAttribute('aria-pressed',String(i===bank));button.onclick=()=>selectBank(i);$('#banks').append(button);
+  });
+  $('#slots').replaceChildren();slotGroups.forEach(([name,color],group)=>{
+    const row=document.createElement('div'),label=document.createElement('span'),slots=document.createElement('div');
+    row.className='slot-group';row.style.setProperty('--slot-color',color);label.className='slot-group-label';label.textContent=name;slots.className='slot-row';
+    for(let position=0;position<4;position++){
+      const n=bank*20+group*4+position,b=document.createElement('button');b.textContent=programLabel(n);
+      b.setAttribute('aria-label',`Recall pedal preset ${programLabel(n)} · ${name} group · bar ${position+1}`);b.dataset.live='';b.classList.toggle('selected',recalled===n);b.onclick=guarded(()=>recall(n));slots.append(b);
+    }
+    row.append(label,slots);$('#slots').append(row);
+  });
+  $('#selected-slot').textContent=recalled===null?'No slot recalled':`Selected · ${programLabel(recalled)} · ${slotGroups[Math.floor(recalled%20/4)][0]} · bar ${recalled%4+1}`;updateConnection();
 }
 async function recall(n){
   if(busy)return;liveEdits.clear();const token=cancelToken;await midi.program(n);if(token!==cancelToken)return;recalled=n;bank=Math.floor(n/20);resetDraft(n);renderBanks();notice(`Loaded pedal preset ${programLabel(n)}.`);
@@ -258,6 +272,7 @@ $('#ports').onchange=guarded(()=>{autoSelect=Boolean($('#ports').value);if(!auto
 $('#channel').onchange=guarded(()=>{cancelToken++;queueDraft();midi.channel=Number($('#channel').value);liveEdits.clear();recentSends.clear();setEngaged(null);if(midi.port?.state==='connected')midi.arm();renderValues();renderActivity();notice(`Channel ${midi.channel} selected.`);});
 $('#blank').onclick=()=>{resetDraft();notice('');};
 $('#apply').onclick=guarded(applyDraft);
+$('#show-save-guide').onclick=()=>$('#pedal-save-guide').scrollIntoView({block:'start'});
 $('#engage').onclick=guarded(()=>midi.cc(91,engaged===true?0:127));
 $$('[data-action]').forEach(b=>b.onclick=guarded(async()=>{const [cc,value]=b.dataset.action.split(':').map(Number);await midi.cc(cc,value);toast(`${b.textContent.trim()} sent.`);}));
 $$('[data-cc]').forEach(select=>select.onchange=guarded(()=>{if(select.value!=='')return setValue(Number(select.dataset.cc),Number(select.value),true);else{liveEdits.delete(Number(select.dataset.cc));delete draft.values[select.dataset.cc];pendingControls.delete(Number(select.dataset.cc));renderValues();notice('Setting omitted from the editor. The pedal is unchanged.');}}));
@@ -321,11 +336,12 @@ async function importDesktopLibrary(){
 }
 if(desktop){
   document.body.classList.add('desktop');
+  if(desktop.version){const label=$('#app-version');label.textContent=`v${desktop.version}`;label.title=`Build ${desktop.buildNumber}`;label.hidden=false;}
   if(!SIMULATOR)$('.hero-note').textContent='NATIVE MIDI';
   $('.independent').remove();
   $('#guide .help-grid article:first-child li:nth-child(2)').textContent='The app detects your pedal automatically. Select Refresh MIDI if it is not listed.';
   $('#guide .help-grid article:nth-child(3) p:last-child').textContent='Presets are stored in this app’s library on your Mac. Export a copy to keep a backup.';
-  $('.library>small').textContent='Presets are saved in the app. Export to keep a backup.';
+
   $('label[for=import]').removeAttribute('for');
   const importButton=document.createElement('button');importButton.className='quiet-button';importButton.textContent='Import library ↑';importButton.onclick=guarded(importDesktopLibrary);
   $('.library-tools label').replaceWith(importButton);

@@ -1,5 +1,7 @@
 # Chroma Console Studio
 
+**Current version: 1.0.0-beta.5 · build 5.** The version appears in the app’s title bar, connection header and **Chroma Console → About Chroma Console**.
+
 A standalone macOS MIDI editor for the **Hologram Electronics Chroma Console**. Control the pedal over USB from a desktop app, with a local preset library and a dark interface.
 
 Independent community software. Not affiliated with or endorsed by Hologram Electronics.
@@ -54,18 +56,45 @@ Live edits need no extra Send step. **Apply unsent edits** appears when settings
 
 ### 3. Recall and save presets
 
-![Presets page with banks A–D and 20 pedal slots on the left, and an example local library, preset name, notes and Save preset button on the right.](docs/screenshots/presets.jpg)
+![Presets page showing Chroma’s five colour groups per bank and the separate Mac library.](docs/screenshots/presets.jpg)
 
-**Pedal presets, on the left:** choose bank **A, B, C or D**, then click a numbered slot to recall one of the pedal's **80 internal presets**. The arrow buttons recall the previous or next slot. Recall clears the displayed parameter values because the pedal does not report the contents of the selected preset.
+**The two libraries are separate.** Save editor settings on the Mac, load and apply them whenever you want to play, and save them into the pedal's memory only when you want the sound available without the app. Sending edits does not automatically overwrite an internal slot.
 
-**Local library, on the right:** keep named settings on your Mac.
+#### Understand Chroma's 80 slots
 
-1. Shape a sound on the Sound page, then use **Save this sound** or **⌘S**.
-2. Enter a name and optional notes, then click **Save preset**.
-3. Later, click **Load** beside a saved sound to prepare it in the editor. Review it, then click **Apply loaded preset** on the Sound page to send its settings.
-4. Use **Export library** for a JSON backup, and **Import library** to bring saved sounds into the app.
+There are **four banks A–D, with 20 slots in each bank**. The module buttons identify the bank: **A = Character, B = Movement, C = Diffusion, D = Texture**. Each bank has **five colour groups of four slots**:
 
-Local presets contain the parameter values known to the editor, optionally based on a recalled pedal slot. They are not full pedal backups and do not write into the pedal's internal slots. Use the pedal itself to save an internal preset. The example names shown here are for the walkthrough and are not bundled factory sounds.
+| LED group | Slots within each bank |
+| --- | --- |
+| Red | 1–4 |
+| Yellow | 5–8 |
+| Green | 9–12 |
+| Blue | 13–16 |
+| Purple | 17–20 |
+
+In the pedal's preset menus, the white bar indicates the position within the group. For example, **B14** is the Movement bank, blue group, second bar. The app uses the same groups. Clicking a slot recalls its existing sound; it does not save your current edits. Recall clears the displayed values because the pedal does not report the slot's contents.
+
+#### Save in the app library
+
+1. Make your edits on **Sound**, then open **Presets** or press **⌘S**.
+2. Name the sound, add optional notes, and click **Save on Mac**. This uses no pedal slot and sends no MIDI.
+3. To play it later, choose **Load**, review the settings on Sound, then click **Apply loaded preset**.
+4. Use **Export library** for a JSON backup and **Import library** to add a collection.
+
+Each app currently supports **up to 500 presets in its active library**, with a 1 MB JSON import limit. You can keep additional exported collections on disk. Import adds to the active library; it does not bypass the 500-preset limit.
+
+Local presets contain only values known to the editor and an optional base pedal slot. If a preset says **Based on A01**, for example, the app recalls A01 before applying its saved edits. Changing A01 on the pedal can therefore change how that library preset sounds. Unset controls retain the pedal's settings. Audio, Gestures and settings the editor cannot read are not backed up.
+
+#### Save the playing sound into Chroma Console
+
+![Numbered instructions for copying the playing sound, choosing a pedal destination, saving and cancelling.](docs/screenshots/preset-saving.jpg)
+
+1. **Apply your sound first.** Live edits are already sent; loaded presets and unsent edits need Apply. Finish physical adjustments before copying.
+2. **Copy:** briefly press and release **Movement + Diffusion** together (B + C) on the pedal, before choosing a destination.
+3. **Choose a destination:** turn the Amount knob for the desired bank, or step with the footswitches. Check the bank, LED colour and white cursor against the chart above. Existing sounds may be auditioned while you browse; your original sound remains copied.
+4. **Save:** press **Movement + Diffusion** together again. This replaces that slot. Wait for the teal animation to finish.
+
+To cancel, **hold the right Bypass footswitch**. A red animation indicates cancellation and the copied sound returns. Chroma's published MIDI interface supports slot recall, but not remote saving. See the [official manual, pages 31–35](https://www.hologramelectronics.com/pages/chroma-console-manual).
 
 ### 4. Use the performance controls
 
